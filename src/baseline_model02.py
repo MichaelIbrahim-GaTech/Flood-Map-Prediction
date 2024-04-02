@@ -274,23 +274,17 @@ class BaseLineModel:
         models = []
         folds = 5
         y_solution = np.zeros(shape=(self.X_train.shape[0],1))
-        #skf = StratifiedKFold(n_splits=folds, random_state=42, shuffle=True)
-        #for fold, (train_idx, val_idx) in enumerate(skf.split(self.X_train, self.y_train)):
         for fold in range(folds):
             n = self.X_train.shape[0]
             val_idx = [i for i in range(n) if i*folds//n == fold]
             train_idx = [i for i in range(n) if i*folds//n != fold]
             model = CatBoostClassifier(iterations=100, verbose=1000,random_seed=42, eval_metric='BrierScore')#, eval_metric='AUC')#
             model.fit(self.X_train[train_idx,:][:,self.selected_features], self.y_train[train_idx], eval_set=(self.X_train[val_idx,:][:,self.selected_features], self.y_train[val_idx]), use_best_model=True)
-            #model2 = LGBMClassifier()
-            #model2.fit(self.X_train[train_idx,:][:,self.selected_features], self.y_train[train_idx], eval_set=(self.X_train[val_idx,:][:,self.selected_features], self.y_train[val_idx]))
             
-            #preds = (model.predict_proba(self.X_train[val_idx,:][:,self.selected_features])[:, 1]+model2.predict_proba(self.X_train[val_idx,:][:,self.selected_features])[:, 1])/2
             preds = model.predict_proba(self.X_train[val_idx,:][:,self.selected_features])[:, 1]
             y_solution[val_idx,0] = preds
             models.append(model)
-            #models.append(model2)
-        
+            
         scores = roc_auc_score(self.y_train, y_solution)
         bscores = brier_score_loss(self.y_train, y_solution)
         print('AUC score' , scores)
