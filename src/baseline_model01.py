@@ -327,7 +327,7 @@ class BaseLineModel:
         ##for fold, (train_idx, val_idx) in enumerate(skf.split(temp_data['train']['X'], temp_data['train']['y'])):
         #results = {}
         #eliminated = set()
-        #for features_count in range(10,35):
+        #for features_count in range(10,50):
         #    n = temp_data['train']['X'].shape[0]
         #    val_idx = [i for i in range(n) if i*folds//n == 0]
         #    train_idx = [i for i in range(n) if i*folds//n != 0]
